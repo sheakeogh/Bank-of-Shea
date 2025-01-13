@@ -1,5 +1,6 @@
 package com.bank.backend.model;
 
+import lombok.NoArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
@@ -13,6 +14,7 @@ import jakarta.persistence.OneToMany;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Account {
     
     @Id
