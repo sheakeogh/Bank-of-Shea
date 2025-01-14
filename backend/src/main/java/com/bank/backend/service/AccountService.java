@@ -1,7 +1,6 @@
 package com.bank.backend.service;
 
 import java.util.List;
-
 import com.bank.backend.model.Account;
 
 public interface AccountService {

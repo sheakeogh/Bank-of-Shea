@@ -3,7 +3,6 @@ package com.bank.backend.service.impl;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.bank.backend.exception.ResourceNotFoundException;
 import com.bank.backend.model.Account;
 import com.bank.backend.repository.AccountRepository;
