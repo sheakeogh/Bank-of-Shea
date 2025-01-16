@@ -23,7 +23,7 @@ public class AccountServiceImplTests {
     private AccountServiceImpl accountService;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
