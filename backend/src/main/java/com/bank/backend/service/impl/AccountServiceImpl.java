@@ -38,10 +38,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private Account updateExistingAccount(Account existingAccount, Account account) {
-        existingAccount.setName(account.getName());
-        existingAccount.setEmail(account.getEmail());
-        existingAccount.setPhone(account.getPhone());
-        existingAccount.setAddress(account.getAddress());
+        existingAccount.setFirstName(account.getFirstName());
+        existingAccount.setLastName(account.getLastName());
+        existingAccount.setAccountNumber(account.getAccountNumber());
+        existingAccount.setBalance(account.getBalance());
+        existingAccount.setAccountType(account.getAccountType());
         
         return accountRepository.save(existingAccount);
     }

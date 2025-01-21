@@ -1,20 +1,13 @@
 package com.bank.backend.model;
 
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.List;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 public class Account {
     
     @Id
@@ -24,9 +17,14 @@ public class Account {
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
 
-    private String name;
-    private String email;
-    private String phone;
-    private String address;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User userAccount;
+
+    private String firstName;
+    private String lastName;
+    private String accountNumber;
+    private double balance;
+    private AccountType accountType;
 
 }

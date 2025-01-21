@@ -1,11 +1,10 @@
 package com.bank.backend.controller;
 
 import com.bank.backend.model.Account;
+import com.bank.backend.model.AccountType;
 import com.bank.backend.model.Transaction;
 import com.bank.backend.model.TransactionType;
-import com.bank.backend.repository.TransactionRepository;
 import com.bank.backend.service.TransactionService;
-import com.bank.backend.service.impl.TransactionServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,10 +57,11 @@ public class TransactionControllerTests {
     private Account createAccount() {
         Account account = new Account();
         account.setId(1L);
-        account.setName("Name");
-        account.setPhone("123456");
-        account.setEmail("mail@mail.com");
-        account.setAddress("Address");
+        account.setFirstName("Name");
+        account.setLastName("Name");
+        account.setAccountNumber("123456");
+        account.setBalance(50.00);
+        account.setAccountType(AccountType.CURRENT);
 
         return account;
     }

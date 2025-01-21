@@ -2,6 +2,7 @@ package com.bank.backend.service.impl;
 
 import com.bank.backend.exception.ResourceNotFoundException;
 import com.bank.backend.model.Account;
+import com.bank.backend.model.AccountType;
 import com.bank.backend.repository.AccountRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -92,10 +93,11 @@ public class AccountServiceImplTests {
 
         Account updatedAccount = new Account();
         updatedAccount.setId(1L);
-        updatedAccount.setName("NewName");
-        updatedAccount.setPhone("654321");
-        updatedAccount.setEmail("newmail@newmail.com");
-        updatedAccount.setAddress("NewAddress");
+        updatedAccount.setFirstName("NewName");
+        updatedAccount.setLastName("NewName");
+        updatedAccount.setAccountNumber("654321");
+        updatedAccount.setBalance(5.00);
+        updatedAccount.setAccountType(AccountType.SAVINGS);
 
         Mockito.when(accountRepository.findById(Mockito.any())).thenReturn(Optional.of(account));
         Mockito.when(accountRepository.save(Mockito.any(Account.class))).thenReturn(updatedAccount);
@@ -143,15 +145,16 @@ public class AccountServiceImplTests {
         Mockito.verify(accountRepository, Mockito.times(1)).existsById(Mockito.any());
     }
 
-
     private Account createAccount() {
         Account account = new Account();
         account.setId(1L);
-        account.setName("Name");
-        account.setPhone("123456");
-        account.setEmail("mail@mail.com");
-        account.setAddress("Address");
+        account.setFirstName("Name");
+        account.setLastName("Name");
+        account.setAccountNumber("123456");
+        account.setBalance(50.00);
+        account.setAccountType(AccountType.CURRENT);
 
         return account;
     }
+
 }
