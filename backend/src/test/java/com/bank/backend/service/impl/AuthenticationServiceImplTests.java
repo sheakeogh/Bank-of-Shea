@@ -112,6 +112,11 @@ public class AuthenticationServiceImplTests {
         Assertions.assertEquals("accessToken", authenticationResponse.getAccessToken());
         Assertions.assertEquals("refreshToken", authenticationResponse.getRefreshToken());
         Assertions.assertEquals("User Login Was Successful.", authenticationResponse.getMessage());
+        Assertions.assertTrue(user.isAccountNonExpired());
+        Assertions.assertTrue(user.isAccountNonLocked());
+        Assertions.assertTrue(user.isCredentialsNonExpired());
+        Assertions.assertTrue(user.isEnabled());
+        Assertions.assertNotNull(user.getAuthorities());
 
         Mockito.verify(authenticationManager, Mockito.times(1)).authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class));
         Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.anyString());
