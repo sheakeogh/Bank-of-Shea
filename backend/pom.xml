@@ -121,6 +121,7 @@
 				<configuration>
 					<excludes>
 						<exclude>**/*com/bank/backend/BackendApplication.class</exclude>
+						<exclude>**/*com/bank/backend/configuration/SecurityConfiguration.class</exclude>
 					</excludes>
 				</configuration>
 				<executions>
