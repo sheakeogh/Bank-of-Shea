@@ -2,10 +2,7 @@ package com.bank.backend.service.impl;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.bank.backend.model.AccountDTO;
-import com.bank.backend.model.AccountType;
 import com.bank.backend.model.User;
 import com.bank.backend.repository.UserRepository;
 import com.bank.backend.service.JwtService;

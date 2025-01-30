@@ -1,6 +1,5 @@
 package com.bank.backend.controller;
 
-import com.bank.backend.model.Account;
 import com.bank.backend.model.TransactionDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
