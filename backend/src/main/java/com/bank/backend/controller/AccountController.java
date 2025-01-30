@@ -1,17 +1,13 @@
 package com.bank.backend.controller;
 
 import java.util.List;
+
+import com.bank.backend.model.Account;
+import com.bank.backend.model.AccountDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import com.bank.backend.model.Account;
+import org.springframework.web.bind.annotation.*;
 import com.bank.backend.service.AccountService;
 
 @RestController
@@ -21,8 +17,9 @@ public class AccountController {
     private AccountService accountService;
 
     @PostMapping("/account")
-    public ResponseEntity<?> createAccount(@RequestBody Account newAccount) {
-        Account account = accountService.createNewAccount(newAccount);
+    public ResponseEntity<?> createAccount(@RequestBody Account newAccount, @RequestHeader("Authorization") String tokenHeader) {
+        String token = tokenHeader.substring(7);
+        AccountDTO account = accountService.createNewAccount(newAccount, token);
 
         if (account == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error Creating Account. Please Try Again.");
@@ -33,7 +30,7 @@ public class AccountController {
 
     @GetMapping("/accounts")
     public ResponseEntity<?> getAllAccounts() {
-        List<Account> accountList = accountService.getAllAccounts();
+        List<AccountDTO> accountList = accountService.getAllAccounts();
 
         if (accountList.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Accounts Found.");

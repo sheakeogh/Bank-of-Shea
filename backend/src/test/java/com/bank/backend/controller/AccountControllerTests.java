@@ -1,6 +1,7 @@
 package com.bank.backend.controller;
 
 import com.bank.backend.model.Account;
+import com.bank.backend.model.AccountDTO;
 import com.bank.backend.model.AccountType;
 import com.bank.backend.service.AccountService;
 import org.junit.jupiter.api.Assertions;
@@ -31,53 +32,52 @@ public class AccountControllerTests {
 
     @Test
     public void testCreateAccountSuccess() {
+        AccountDTO accountDTO = createAccountDTO();
         Account account = createAccount();
 
-        Mockito.when(accountService.createNewAccount(Mockito.any(Account.class))).thenReturn(account);
+        Mockito.when(accountService.createNewAccount(Mockito.any(Account.class), Mockito.anyString())).thenReturn(accountDTO);
 
-        ResponseEntity<?> response = accountController.createAccount(account);
+        ResponseEntity<?> response = accountController.createAccount(account, "Bearer accessToken");
 
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assertions.assertEquals(account, response.getBody());
+        Assertions.assertEquals(accountDTO, response.getBody());
 
-        Mockito.verify(accountService, Mockito.times(1)).createNewAccount(Mockito.any(Account.class));
+        Mockito.verify(accountService, Mockito.times(1)).createNewAccount(Mockito.any(Account.class), Mockito.anyString());
     }
 
     @Test
     public void testCreateAccountFail() {
         Account account = createAccount();
 
-        Mockito.when(accountService.createNewAccount(Mockito.any(Account.class))).thenReturn(null);
+        Mockito.when(accountService.createNewAccount(Mockito.any(Account.class), Mockito.anyString())).thenReturn(null);
 
-        ResponseEntity<?> response = accountController.createAccount(account);
+        ResponseEntity<?> response = accountController.createAccount(account, "Bearer accessToken");
 
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         Assertions.assertEquals("Error Creating Account. Please Try Again.", response.getBody());
 
-        Mockito.verify(accountService, Mockito.times(1)).createNewAccount(Mockito.any(Account.class));
+        Mockito.verify(accountService, Mockito.times(1)).createNewAccount(Mockito.any(Account.class), Mockito.anyString());
     }
 
     @Test
     public void testGetAllAccountsSuccess() {
-        List<Account> accountList = Arrays.asList(createAccount(), createAccount());
+        List<AccountDTO> accountDTOList = Arrays.asList(createAccountDTO(), createAccountDTO());
 
-        Mockito.when(accountService.getAllAccounts()).thenReturn(accountList);
+        Mockito.when(accountService.getAllAccounts()).thenReturn(accountDTOList);
 
         ResponseEntity<?> response = accountController.getAllAccounts();
 
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals(accountList, response.getBody());
+        Assertions.assertEquals(accountDTOList, response.getBody());
 
         Mockito.verify(accountService, Mockito.times(1)).getAllAccounts();
     }
 
     @Test
     public void testGetAllAccountsFail() {
-        List<Account> account = Arrays.asList(createAccount(), createAccount());
-
         Mockito.when(accountService.getAllAccounts()).thenReturn(Collections.emptyList());
 
         ResponseEntity<?> response = accountController.getAllAccounts();
@@ -91,15 +91,15 @@ public class AccountControllerTests {
 
     @Test
     public void testGetAccountByIdSuccess() {
-        Account account = createAccount();
+        AccountDTO accountDTO = createAccountDTO();
 
-        Mockito.when(accountService.getAccountById(Mockito.any())).thenReturn(account);
+        Mockito.when(accountService.getAccountById(Mockito.any())).thenReturn(accountDTO);
 
         ResponseEntity<?> response = accountController.getAccountById(1L);
 
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals(account, response.getBody());
+        Assertions.assertEquals(accountDTO, response.getBody());
 
         Mockito.verify(accountService, Mockito.times(1)).getAccountById(Mockito.any());
     }
@@ -107,14 +107,15 @@ public class AccountControllerTests {
     @Test
     public void testUpdateAccountSuccess() {
         Account account = createAccount();
+        AccountDTO accountDTO = createAccountDTO();
 
-        Mockito.when(accountService.updateAccount(Mockito.any(), Mockito.any(Account.class))).thenReturn(account);
+        Mockito.when(accountService.updateAccount(Mockito.any(), Mockito.any(Account.class))).thenReturn(accountDTO);
 
         ResponseEntity<?> response = accountController.updateAccount(1L, account);
 
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals(account, response.getBody());
+        Assertions.assertEquals(accountDTO, response.getBody());
 
         Mockito.verify(accountService, Mockito.times(1)).updateAccount(Mockito.any(), Mockito.any(Account.class));
     }
@@ -135,6 +136,17 @@ public class AccountControllerTests {
     private Account createAccount() {
         Account account = new Account();
         account.setId(1L);
+        account.setFirstName("Name");
+        account.setLastName("Name");
+        account.setAccountNumber("123456");
+        account.setBalance(50.00);
+        account.setAccountType(AccountType.CURRENT);
+
+        return account;
+    }
+
+    private AccountDTO createAccountDTO() {
+        AccountDTO account = new AccountDTO();
         account.setFirstName("Name");
         account.setLastName("Name");
         account.setAccountNumber("123456");

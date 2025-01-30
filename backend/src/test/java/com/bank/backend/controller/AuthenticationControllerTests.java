@@ -4,7 +4,6 @@ import com.bank.backend.model.AuthenticationResponse;
 import com.bank.backend.model.User;
 import com.bank.backend.service.AuthenticationService;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

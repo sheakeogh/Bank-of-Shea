@@ -1,13 +1,14 @@
 package com.bank.backend.service.impl;
 
 import com.bank.backend.exception.ResourceNotFoundException;
-import com.bank.backend.model.Account;
-import com.bank.backend.model.AccountType;
+import com.bank.backend.model.*;
 import com.bank.backend.repository.AccountRepository;
+import com.bank.backend.repository.UserRepository;
+import com.bank.backend.service.JwtService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.mockito.InjectMocks;
@@ -20,6 +21,12 @@ public class AccountServiceImplTests {
     @Mock
     private AccountRepository accountRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private JwtService jwtService;
+
     @InjectMocks
     private AccountServiceImpl accountService;
 
@@ -31,32 +38,61 @@ public class AccountServiceImplTests {
     @Test
     public void testCreateAccountSuccess() {
         Account account = createAccount();
+        AccountDTO accountDTO = createAccountDTO();
+        User user = createUser();
 
+        Mockito.when(jwtService.extractUsername(Mockito.anyString())).thenReturn(user.getUsername());
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.of(user));
         Mockito.when(accountRepository.save(Mockito.any(Account.class))).thenReturn(account);
 
-        Account actualAccount = accountService.createNewAccount(account);
+        AccountDTO actualAccount = accountService.createNewAccount(account, "accessToken");
 
         Assertions.assertNotNull(actualAccount);
-        Assertions.assertEquals(account, actualAccount);
+        Assertions.assertEquals(accountDTO.getFirstName(), actualAccount.getFirstName());
+        Assertions.assertEquals(accountDTO.getLastName(), actualAccount.getLastName());
+        Assertions.assertEquals(accountDTO.getBalance(), actualAccount.getBalance());
+        Assertions.assertEquals(accountDTO.getAccountNumber(), actualAccount.getAccountNumber());
+        Assertions.assertEquals(accountDTO.getAccountType(), actualAccount.getAccountType());
+        Assertions.assertEquals(accountDTO.getUserId(), actualAccount.getUserId());
 
+        Mockito.verify(jwtService, Mockito.times(1)).extractUsername(Mockito.anyString());
+        Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.anyString());
         Mockito.verify(accountRepository, Mockito.times(1)).save(Mockito.any(Account.class));
     }
 
     @Test
+    public void testCreateAccountFail() {
+        Account account = createAccount();
+        User user = createUser();
+
+        Mockito.when(jwtService.extractUsername(Mockito.anyString())).thenReturn(user.getUsername());
+        Mockito.when(userRepository.findByUsername(Mockito.anyString())).thenReturn(Optional.empty());
+
+        AccountDTO actualAccount = accountService.createNewAccount(account, "accessToken");
+
+        Assertions.assertNull(actualAccount);
+
+        Mockito.verify(jwtService, Mockito.times(1)).extractUsername(Mockito.anyString());
+        Mockito.verify(userRepository, Mockito.times(1)).findByUsername(Mockito.anyString());
+    }
+
+    @Test
     public void testGetAllAccountsSuccess() {
-        Account account1 = createAccount();
-        Account account2 = createAccount();
+        List<Account> accountList = List.of(createAccount());
+        List<AccountDTO> accountDTOList = List.of(createAccountDTO());
 
-        List<Account> expectedAccountList = Arrays.asList(account1, account2);
+        Mockito.when(accountRepository.findAll()).thenReturn(accountList);
 
-        Mockito.when(accountRepository.findAll()).thenReturn(expectedAccountList);
-
-        List<Account> actualAccounts = accountService.getAllAccounts();
+        List<AccountDTO> actualAccounts = accountService.getAllAccounts();
 
         Assertions.assertNotNull(actualAccounts);
-        Assertions.assertEquals(2, actualAccounts.size());
-        Assertions.assertTrue(actualAccounts.contains(account1));
-        Assertions.assertTrue(actualAccounts.contains(account2));
+        Assertions.assertEquals(1, actualAccounts.size());
+        Assertions.assertEquals(accountDTOList.get(0).getFirstName(), actualAccounts.get(0).getFirstName());
+        Assertions.assertEquals(accountDTOList.get(0).getLastName(), actualAccounts.get(0).getLastName());
+        Assertions.assertEquals(accountDTOList.get(0).getBalance(), actualAccounts.get(0).getBalance());
+        Assertions.assertEquals(accountDTOList.get(0).getAccountNumber(), actualAccounts.get(0).getAccountNumber());
+        Assertions.assertEquals(accountDTOList.get(0).getAccountType(), actualAccounts.get(0).getAccountType());
+        Assertions.assertEquals(accountDTOList.get(0).getUserId(), actualAccounts.get(0).getUserId());
 
         Mockito.verify(accountRepository, Mockito.times(1)).findAll();
     }
@@ -64,13 +100,19 @@ public class AccountServiceImplTests {
     @Test
     public void testGetAccountByIdSuccess() {
         Account account = createAccount();
+        AccountDTO accountDTO = createAccountDTO();
 
         Mockito.when(accountRepository.findById(Mockito.any())).thenReturn(Optional.of(account));
 
-        Account actualAccount = accountService.getAccountById(1L);
+        AccountDTO actualAccount = accountService.getAccountById(1L);
 
         Assertions.assertNotNull(actualAccount);
-        Assertions.assertEquals(account, actualAccount);
+        Assertions.assertEquals(accountDTO.getFirstName(), actualAccount.getFirstName());
+        Assertions.assertEquals(accountDTO.getLastName(), actualAccount.getLastName());
+        Assertions.assertEquals(accountDTO.getBalance(), actualAccount.getBalance());
+        Assertions.assertEquals(accountDTO.getAccountNumber(), actualAccount.getAccountNumber());
+        Assertions.assertEquals(accountDTO.getAccountType(), actualAccount.getAccountType());
+        Assertions.assertEquals(accountDTO.getUserId(), actualAccount.getUserId());
 
         Mockito.verify(accountRepository, Mockito.times(1)).findById(Mockito.any());
     }
@@ -98,14 +140,14 @@ public class AccountServiceImplTests {
         updatedAccount.setAccountNumber("654321");
         updatedAccount.setBalance(5.00);
         updatedAccount.setAccountType(AccountType.SAVINGS);
+        updatedAccount.setUserAccount(createUser());
 
         Mockito.when(accountRepository.findById(Mockito.any())).thenReturn(Optional.of(account));
         Mockito.when(accountRepository.save(Mockito.any(Account.class))).thenReturn(updatedAccount);
 
-        Account actualAccount = accountService.updateAccount(1L, updatedAccount);
+        AccountDTO actualAccount = accountService.updateAccount(1L, updatedAccount);
 
         Assertions.assertNotNull(actualAccount);
-        Assertions.assertEquals(updatedAccount, actualAccount);
 
         Mockito.verify(accountRepository, Mockito.times(1)).findById(Mockito.any());
         Mockito.verify(accountRepository, Mockito.times(1)).save(Mockito.any(Account.class));
@@ -145,6 +187,18 @@ public class AccountServiceImplTests {
         Mockito.verify(accountRepository, Mockito.times(1)).existsById(Mockito.any());
     }
 
+    private AccountDTO createAccountDTO() {
+        AccountDTO account = new AccountDTO();
+        account.setFirstName("Name");
+        account.setLastName("Name");
+        account.setAccountNumber("123456");
+        account.setBalance(50.00);
+        account.setAccountType(AccountType.CURRENT);
+        account.setUserId(1);
+
+        return account;
+    }
+
     private Account createAccount() {
         Account account = new Account();
         account.setId(1L);
@@ -153,8 +207,21 @@ public class AccountServiceImplTests {
         account.setAccountNumber("123456");
         account.setBalance(50.00);
         account.setAccountType(AccountType.CURRENT);
+        account.setUserAccount(createUser());
 
         return account;
+    }
+
+    private User createUser() {
+        User user = new User();
+        user.setId(1);
+        user.setUsername("Name");
+        user.setPassword("Password");
+        user.setUserRole(UserRole.USER);
+        user.setAccounts(Collections.emptyList());
+        user.setTokens(Collections.emptyList());
+
+        return user;
     }
 
 }

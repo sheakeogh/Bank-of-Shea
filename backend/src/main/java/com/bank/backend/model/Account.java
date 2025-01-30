@@ -14,7 +14,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account")
     private List<Transaction> transactions;
 
     @ManyToOne
@@ -25,6 +25,8 @@ public class Account {
     private String lastName;
     private String accountNumber;
     private double balance;
+
+    @Enumerated(value = EnumType.STRING)
     private AccountType accountType;
 
 }

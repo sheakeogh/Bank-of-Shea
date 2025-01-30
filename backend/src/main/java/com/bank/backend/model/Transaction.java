@@ -24,10 +24,13 @@ public class Transaction {
     @JoinColumn(name = "account_id")
     private Account account;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = EnumType.STRING)
     private TransactionType transactionType;
 
     private String description;
     private Double amount;
+
+    @Enumerated(value = EnumType.STRING)
+    private AccountType accountType;
 
 }

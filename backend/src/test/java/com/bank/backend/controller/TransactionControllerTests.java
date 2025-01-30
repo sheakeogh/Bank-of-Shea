@@ -1,9 +1,6 @@
 package com.bank.backend.controller;
 
-import com.bank.backend.model.Account;
-import com.bank.backend.model.AccountType;
-import com.bank.backend.model.Transaction;
-import com.bank.backend.model.TransactionType;
+import com.bank.backend.model.*;
 import com.bank.backend.service.TransactionService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,16 +28,27 @@ public class TransactionControllerTests {
     @Test
     public void testCreateTransactionSuccess() {
         Transaction transaction = createTransaction();
+        TransactionDTO transactionDTO = createTransactionDTO();
 
-        Mockito.when(transactionService.createNewTransaction(Mockito.any(Transaction.class))).thenReturn(transaction);
+        Mockito.when(transactionService.createNewTransaction(Mockito.any(Transaction.class), Mockito.anyString())).thenReturn(transactionDTO);
 
-        ResponseEntity<?> response = transactionController.createTransaction(transaction);
+        ResponseEntity<?> response = transactionController.createTransaction(transaction, "Bearer accessToken");
 
         Assertions.assertNotNull(response);
         Assertions.assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        Assertions.assertEquals(transaction, response.getBody());
+        Assertions.assertEquals(transactionDTO, response.getBody());
 
-        Mockito.verify(transactionService, Mockito.times(1)).createNewTransaction(Mockito.any(Transaction.class));
+        Mockito.verify(transactionService, Mockito.times(1)).createNewTransaction(Mockito.any(Transaction.class), Mockito.anyString());
+    }
+
+    private TransactionDTO createTransactionDTO() {
+        TransactionDTO transaction = new TransactionDTO();
+        transaction.setAccountId(1L);
+        transaction.setTransactionType(TransactionType.LODGEMENT);
+        transaction.setDescription("Income");
+        transaction.setAmount(20.00);
+
+        return transaction;
     }
 
     private Transaction createTransaction() {
