@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import com.bank.backend.service.AccountService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class AccountController {
     
     @Autowired
@@ -48,7 +49,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = { @Content(schema = @Schema(hidden = true))} ),
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = { @Content(schema = @Schema(hidden = true))} )
     })
-    public ResponseEntity<?> getAllAccounts() {
+    public ResponseEntity<?> getAllAccounts(@RequestHeader("Authorization") String tokenHeader) {
+        System.out.println(tokenHeader);
         List<AccountDTO> accountList = accountService.getAllAccounts();
 
         if (accountList.isEmpty()) {
