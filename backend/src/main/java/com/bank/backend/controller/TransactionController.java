@@ -14,7 +14,6 @@ import com.bank.backend.model.Transaction;
 import com.bank.backend.service.TransactionService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 public class TransactionController {
 
     @Autowired

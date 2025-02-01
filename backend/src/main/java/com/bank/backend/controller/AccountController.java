@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import com.bank.backend.service.AccountService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 public class AccountController {
     
     @Autowired
